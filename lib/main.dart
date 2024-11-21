@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todolist/widget/bottom_navbar.dart';
 import 'design_system/styles/font_collections.dart';
 
 void main() {
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF043D6A)),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'TodoList'),
+      home: BottomNavbar(),
     );
   }
 }
