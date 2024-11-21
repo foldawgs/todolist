@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:curved_nav_bar/curved_bar/curved_action_bar.dart';
 import 'package:curved_nav_bar/fab_bar/fab_bottom_app_bar_item.dart';
 import 'package:curved_nav_bar/flutter_curved_bottom_nav_bar.dart';
+import 'package:todolist/design_system/styles/color_collections.dart';
+import 'package:todolist/homePage.dart';
+import 'package:todolist/tambahCatatan.dart';
 
 class BottomNavbar extends StatefulWidget {
   const BottomNavbar({super.key});
@@ -22,63 +25,103 @@ class _BottomNavbarState extends State<BottomNavbar> {
           activeIcon: Container(
             padding: EdgeInsets.all(8),
             decoration:
-                BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                BoxDecoration(color: ColorCollections.primaryBlue, shape: BoxShape.circle),
             child: Icon(
-              Icons.camera_alt,
+              Icons.add,
               size: 50,
-              color: Colors.orange,
+              color: ColorCollections.colorWhite,
             ),
           ),
           inActiveIcon: Container(
             padding: EdgeInsets.all(8),
             decoration:
-                BoxDecoration(color: Colors.white70, shape: BoxShape.circle),
+                BoxDecoration(color: ColorCollections.primaryBlue, shape: BoxShape.circle),
             child: Icon(
-              Icons.camera_alt_outlined,
+              Icons.add,
               size: 50,
-              color: Colors.orange,
+              color: ColorCollections.colorWhite,
             ),
           ),
-          text: "Camera"),
-      activeColor: Colors.blue,
-      navBarBackgroundColor: Colors.limeAccent,
+          text: ""),
+      activeColor: ColorCollections.primaryBlue,
+      navBarBackgroundColor: ColorCollections.colorWhite,
       inActiveColor: Colors.black45,
       appBarItems: [
+
+        // HOME
         FABBottomAppBarItem(
             activeIcon: Icon(
               Icons.home,
-              color: Colors.blue,
+              size: 35,
+              color: ColorCollections.primaryBlue,
             ),
             inActiveIcon: Icon(
               Icons.home,
-              color: Colors.black26,
+              size: 35,
+              color: ColorCollections.primaryBlue,
             ),
-            text: 'Home'),
+            text: ''
+            ),
+
+        // RECORD
         FABBottomAppBarItem(
             activeIcon: Icon(
-              Icons.wallet_giftcard,
-              color: Colors.blue,
+              Icons.mic,
+              size: 35,
+              color: ColorCollections.primaryBlue,
             ),
             inActiveIcon: Icon(
-              Icons.wallet_giftcard,
-              color: Colors.black26,
+              Icons.mic,
+              size: 35,
+              color: ColorCollections.primaryBlue,
             ),
-            text: 'Wallet'),
+            text: ''),
+
+        // LIST
+        FABBottomAppBarItem(
+            activeIcon: Icon(
+              Icons.list,
+              size: 35,
+              color: ColorCollections.primaryBlue,
+            ),
+            inActiveIcon: Icon(
+              Icons.list,
+              size: 35,
+              color: ColorCollections.primaryBlue,
+            ),
+            text: ''),
+
+        // WALLET
+        FABBottomAppBarItem(
+            activeIcon: Icon(
+              Icons.person,
+              size: 35,
+              color: ColorCollections.primaryBlue,
+            ),
+            inActiveIcon: Icon(
+              Icons.person,
+              size: 35,
+              color: ColorCollections.primaryBlue,
+            ),
+            text: ''),
       ],
+
       bodyItems: [
+        homePage(),
         Container(
           height: MediaQuery.of(context).size.height,
-          color: Colors.blue,
+          color: ColorCollections.primaryBlue,
         ),
         Container(
           height: MediaQuery.of(context).size.height,
-          color: Colors.pinkAccent,
+          color: ColorCollections.colorDustGrey,
+        ),
+        Container(
+          height: MediaQuery.of(context).size.height,
+          color: ColorCollections.primaryBlue,
         )
       ],
-      actionBarView: Container(
-        height: MediaQuery.of(context).size.height,
-        color: Colors.orange,
-      ),
+      actionBarView: TambahCatatan()
     );
   }
 }
