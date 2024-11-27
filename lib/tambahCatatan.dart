@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:todolist/design_system/styles/font_collections.dart';
+import 'package:todolist/design_system/styles/color_collections.dart';
 
 class TambahCatatan extends StatelessWidget {
   const TambahCatatan({super.key});
@@ -10,66 +12,77 @@ class TambahCatatan extends StatelessWidget {
         title: Center(
           child: Text(
             "Tambah Catatan",
-            style: TextStyle(),
+            style: FontCollections.h2,
           ),
         ),
       ),
-      body: Center(
-        child: Column(
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.0),
+        child: ListView(
           children: [
             Container(
-              width: 350,
+              width: double.infinity,
               child: Row(
-              children: [
-                Icon(Icons.list, color: Colors.white),
-                SizedBox(width: 10),
-                Text(
-                "Catatan",
-                style: TextStyle(color: Colors.white),
-                ),
-              ],
+                children: [
+                  Icon(Icons.list, color: ColorCollections.primaryBlue),
+                  SizedBox(width: 20),
+                  Text(
+                    "Catatan",
+                    style: FontCollections.paragraph2,
+                  ),
+                ],
               ),
               height: 100,
-              color: Colors.red,
+              decoration: BoxDecoration(
+                color: ColorCollections.colorWhite,
+                borderRadius: BorderRadius.circular(15),
+              ),
               alignment: Alignment.centerLeft,
               padding: EdgeInsets.symmetric(horizontal: 20),
             ),
-            SizedBox(height: 20), // Add spacing here
+            SizedBox(height: 20),
             Container(
-              width: 350,
+              width: double.infinity,
               child: Row(
-              children: [
-                Icon(Icons.mic, color: Colors.white),
-                SizedBox(width: 10),
-                Text(
-                "Catatan Suara",
-                style: TextStyle(color: Colors.white),
-                ),
-              ],
+                children: [
+                  Icon(Icons.mic, color: ColorCollections.primaryBlue),
+                  SizedBox(width: 20),
+                  Text(
+                    "Catatan Suara",
+                    style: FontCollections.paragraph2,
+                  ),
+                ],
               ),
               height: 100,
-              color: Colors.green,
+              decoration: BoxDecoration(
+                color: ColorCollections.colorWhite,
+                borderRadius: BorderRadius.circular(15),
+              ),
               alignment: Alignment.centerLeft,
               padding: EdgeInsets.symmetric(horizontal: 20),
             ),
-            SizedBox(height: 20), // Add spacing here
+            SizedBox(height: 20),
             Container(
-              width: 350,
+              width: double.infinity,
               child: Row(
-              children: [
-                Icon(Icons.category, color: Colors.white),
-                SizedBox(width: 10),
-                Text(
-                "Kategori",
-                style: TextStyle(color: Colors.white),
-                ),
-              ],
+                children: [
+                  Icon(Icons.category, color: ColorCollections.primaryBlue),
+                  SizedBox(width: 20),
+                  Text(
+                    "Kategori",
+                    style: FontCollections.paragraph2,
+                  ),
+                ],
               ),
               height: 100,
-              color: Colors.blue,
+              decoration: BoxDecoration(
+                color: ColorCollections.colorWhite,
+                borderRadius: BorderRadius.circular(15),
+              ),
               alignment: Alignment.centerLeft,
               padding: EdgeInsets.symmetric(horizontal: 20),
             ),
+            SizedBox(height: 20),
           ],
         ),
       ),

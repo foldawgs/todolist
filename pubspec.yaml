@@ -39,6 +39,7 @@ dependencies:
   flutter_native_splash: ^2.4.2
   curved_nav_bar: ^0.0.2
   syncfusion_flutter_calendar: ^27.2.2
+  flutter_svg: ^2.0.16
 
 dev_dependencies:
   flutter_test:
@@ -73,6 +74,7 @@ flutter:
   assets:
     - assets/fonts/
     - assets/images/
+    - assets/
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:

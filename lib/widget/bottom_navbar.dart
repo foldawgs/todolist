@@ -4,6 +4,8 @@ import 'package:curved_nav_bar/fab_bar/fab_bottom_app_bar_item.dart';
 import 'package:curved_nav_bar/flutter_curved_bottom_nav_bar.dart';
 import 'package:todolist/design_system/styles/color_collections.dart';
 import 'package:todolist/homePage.dart';
+import 'package:todolist/profile.dart';
+import 'package:todolist/suaraPage.dart';
 import 'package:todolist/tambahCatatan.dart';
 
 class BottomNavbar extends StatefulWidget {
@@ -108,18 +110,12 @@ class _BottomNavbarState extends State<BottomNavbar> {
 
       bodyItems: [
         homePage(),
-        Container(
-          height: MediaQuery.of(context).size.height,
-          color: ColorCollections.primaryBlue,
-        ),
+        CatatanSuaraPage(),
         Container(
           height: MediaQuery.of(context).size.height,
           color: ColorCollections.colorDustGrey,
         ),
-        Container(
-          height: MediaQuery.of(context).size.height,
-          color: ColorCollections.primaryBlue,
-        )
+        ProfilePage()
       ],
       actionBarView: TambahCatatan()
     );
