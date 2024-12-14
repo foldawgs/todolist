@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:todolist/design_system/styles/font_collections.dart';
 import 'package:todolist/design_system/styles/color_collections.dart';
+import 'editProfile.dart'; // Import halaman EditProfile
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -34,7 +35,12 @@ class ProfilePage extends StatelessWidget {
             ),
             SizedBox(height: 16.0),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => EditProfile()),
+                );
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: ColorCollections.primaryBlue,
                 shape: RoundedRectangleBorder(
