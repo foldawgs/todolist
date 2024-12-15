@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:todolist/widget/bottom_navbar.dart';
+import 'package:todolist/sign_in.dart';
+import 'package:todolist/sign_up.dart';
+import 'package:todolist/sign_up.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +19,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF043D6A)),
         useMaterial3: true,
       ),
-      home: BottomNavbar(),
+      home: SignInApp(),
     );
   }
 }
