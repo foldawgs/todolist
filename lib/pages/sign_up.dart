@@ -1,18 +1,6 @@
 import 'package:flutter/material.dart';
-
-void main() {
-  runApp(SignUpApp());
-}
-
-class SignUpApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: SignUpScreen(),
-    );
-  }
-}
+import 'package:firebase_auth/firebase_auth.dart';
+import 'sign_in.dart';
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -31,7 +19,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          // Bagian atas (ilustrasi di tengah halaman)
           Expanded(
             flex: 4,
             child: Container(
@@ -39,22 +26,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
               color: Colors.white,
               child: Center(
                 child: Image.asset(
-                  'assets/images/sign_up_sign_in.png', // Ganti dengan path ilustrasi Anda
-                  height: 280, // Sesuaikan ukuran ilustrasi
+                  'assets/images/sign_up_sign_in.png',
+                  height: 280,
                   fit: BoxFit.contain,
                 ),
               ),
             ),
           ),
-
-          // Bagian bawah (form sign up)
           Expanded(
             flex: 6,
             child: Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
               decoration: BoxDecoration(
-                color: Color(0xFF002B5B), // Warna biru sesuai pada gambar
+                color: Color(0xFF002B5B),
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(30),
                   topRight: Radius.circular(30),
@@ -63,7 +48,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Judul "Sign Up"
                   Text(
                     'Sign Up',
                     style: TextStyle(
@@ -73,8 +57,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ),
                   SizedBox(height: 8),
-
-                  // Deskripsi di bawah judul
                   Text(
                     'Buat akun Anda - nikmati layanan kami dengan fitur-fitur terbaik',
                     style: TextStyle(
@@ -83,32 +65,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ),
                   SizedBox(height: 25),
-
-                  // Input field untuk Email
                   _buildTextField(
                     controller: emailController,
                     icon: Icons.email,
                     hintText: 'Email',
                   ),
                   SizedBox(height: 20),
-
-                  // Input field untuk Username
                   _buildTextField(
                     controller: usernameController,
                     icon: Icons.person,
                     hintText: 'Username',
                   ),
                   SizedBox(height: 20),
-
-                  // Input field untuk Pekerjaan
                   _buildTextField(
                     controller: jobController,
                     icon: Icons.work,
                     hintText: 'Pekerjaan',
                   ),
                   SizedBox(height: 20),
-
-                  // Input field untuk Password
                   _buildTextField(
                     controller: passwordController,
                     icon: Icons.lock,
@@ -116,12 +90,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     isPassword: true,
                   ),
                   SizedBox(height: 30),
-
-                  // Tombol submit
                   Center(
                     child: SizedBox(
-                      width: MediaQuery.of(context).size.width *
-                          0.9, // Lebar 80% layar
+                      width: MediaQuery.of(context).size.width * 0.9,
                       child: ElevatedButton(
                         onPressed: () {
                           _submitForm();
@@ -133,8 +104,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             vertical: 15,
                           ),
                           shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(25), // Radius tombol
+                            borderRadius: BorderRadius.circular(25),
                           ),
                         ),
                         child: Text(
@@ -156,7 +126,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  // Widget untuk TextField
   Widget _buildTextField({
     required TextEditingController controller,
     required IconData icon,
@@ -170,36 +139,54 @@ class _SignUpScreenState extends State<SignUpScreen> {
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: TextStyle(color: Colors.white54, fontSize: 14),
-        prefixIcon: Icon(
-          icon,
-          color: Colors.white,
-        ),
+        prefixIcon: Icon(icon, color: Colors.white),
         filled: true,
         fillColor: Colors.white10,
         contentPadding: EdgeInsets.symmetric(vertical: 15),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15), // Sesuai desain
+          borderRadius: BorderRadius.circular(15),
           borderSide: BorderSide.none,
         ),
       ),
     );
   }
 
-  // Fungsi untuk submit form
-  void _submitForm() {
-    String email = emailController.text;
-    String username = usernameController.text;
-    String job = jobController.text;
-    String password = passwordController.text;
+  void _submitForm() async {
+    String email = emailController.text.trim();
+    String password = passwordController.text.trim();
+    String username = usernameController.text.trim();
+    String job = jobController.text.trim();
 
-    if (email.isEmpty || username.isEmpty || job.isEmpty || password.isEmpty) {
+    if (email.isEmpty || password.isEmpty || username.isEmpty || job.isEmpty) {
       _showSnackBar('Semua field harus diisi!');
-    } else {
+      return;
+    }
+
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
+
+      await userCredential.user!.updateDisplayName(username);
+
       _showSnackBar('Akun berhasil dibuat!');
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => SignInScreen()),
+      );
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        _showSnackBar('Email sudah terdaftar!');
+      } else if (e.code == 'weak-password') {
+        _showSnackBar('Kata sandi terlalu lemah!');
+      } else {
+        _showSnackBar('Error: ${e.message}');
+      }
+    } catch (e) {
+      _showSnackBar('Terjadi kesalahan. Coba lagi.');
     }
   }
 
-  // Fungsi untuk menampilkan snackbar
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

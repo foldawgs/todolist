@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:todolist/sign_in.dart';
-import 'package:todolist/sign_up.dart';
-import 'package:todolist/sign_up.dart';
+import 'package:firebase_core/firebase_core.dart'; // Tambahkan ini
+import 'package:todolist/pages/sign_in.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // Pastikan binding Flutter sudah diinisialisasi
+  await Firebase.initializeApp(); // Inisialisasi Firebase
   runApp(const MyApp());
 }
 

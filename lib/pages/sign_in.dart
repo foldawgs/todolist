@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:todolist/sign_up.dart';
+import 'package:todolist/pages/sign_up.dart';
+import 'package:todolist/auth.dart';
+import 'package:todolist/widget/bottom_navbar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 void main() {
   runApp(SignInApp());
@@ -23,6 +26,7 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final Auth _auth = Auth();
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +34,6 @@ class _SignInScreenState extends State<SignInScreen> {
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          // Bagian atas: Gambar ilustrasi
           Expanded(
             flex: 5,
             child: Container(
@@ -38,14 +41,12 @@ class _SignInScreenState extends State<SignInScreen> {
               color: Colors.white,
               child: Center(
                 child: Image.asset(
-                  'assets/images/sign_up_sign_in.png', // Ganti dengan path gambar Anda
+                  'assets/images/sign_up_sign_in.png',
                   height: 280,
                 ),
               ),
             ),
           ),
-
-          // Bagian bawah: Form Sign In
           Expanded(
             flex: 6,
             child: Container(
@@ -61,7 +62,6 @@ class _SignInScreenState extends State<SignInScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Judul "Sign In"
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -74,8 +74,6 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                   ),
                   SizedBox(height: 10),
-
-                  // Subtitle
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -87,40 +85,30 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                   ),
                   SizedBox(height: 20),
-
-                  // Input field: Username
                   _buildTextField(
                     controller: usernameController,
                     icon: Icons.person,
-                    hintText: 'Username',
+                    hintText: 'Email',
                   ),
                   SizedBox(height: 20),
-
-                  // Input field: Password
                   _buildTextField(
                     controller: passwordController,
                     icon: Icons.lock,
                     hintText: 'Password',
                     isPassword: true,
                   ),
-
-                  Spacer(), // Spacer untuk mendorong tombol ke bawah
-
-                  // Tombol "Masuk"
+                  Spacer(),
                   ElevatedButton(
-                    onPressed: () {
-                      _submitForm();
-                    },
+                    onPressed: () => _submitForm(),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: Color(0xFF002B5B),
                       padding: EdgeInsets.symmetric(
                         vertical: 15,
-                        horizontal: 150, // Lebar tombol sesuai desain
+                        horizontal: 150,
                       ),
                       shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(25), // Sesuai desain
+                        borderRadius: BorderRadius.circular(25),
                       ),
                     ),
                     child: Text(
@@ -132,15 +120,12 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                   ),
                   SizedBox(height: 10),
-
-                  // Teks untuk Sign Up
                   GestureDetector(
                     onTap: () {
-                      // Navigasi ke halaman Sign Up
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => SignUpApp(),
+                          builder: (context) => SignUpScreen(),
                         ),
                       );
                     },
@@ -173,7 +158,6 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  // Widget untuk TextField
   Widget _buildTextField({
     required TextEditingController controller,
     required IconData icon,
@@ -195,27 +179,40 @@ class _SignInScreenState extends State<SignInScreen> {
         fillColor: Colors.white10,
         contentPadding: EdgeInsets.symmetric(vertical: 15),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15), // Sesuai desain
+          borderRadius: BorderRadius.circular(15),
           borderSide: BorderSide.none,
         ),
       ),
     );
   }
 
-  // Fungsi untuk submit form
-  void _submitForm() {
-    String username = usernameController.text;
-    String password = passwordController.text;
+  void _submitForm() async {
+  String email = usernameController.text;
+  String password = passwordController.text;
 
-    // Validasi sederhana
-    if (username.isEmpty || password.isEmpty) {
-      _showSnackBar('Username dan Password harus diisi!');
-    } else {
-      _showSnackBar('Berhasil masuk!');
-    }
+  if (email.isEmpty || password.isEmpty) {
+    _showSnackBar('Email dan Password harus diisi!');
+    return;
   }
 
-  // Fungsi untuk menampilkan snackbar
+  try {
+    await _auth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    // Replace the entire screen with BottomNavbar
+    setState(() {
+      // Update the home property of MaterialApp to BottomNavbar
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => BottomNavbar()),
+        (Route<dynamic> route) => false,  // Menyaring semua rute sebelumnya
+      );
+    });
+  } on FirebaseAuthException catch (e) {
+    _showSnackBar(e.message ?? 'Terjadi kesalahan, coba lagi.');
+  }
+}
+
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
