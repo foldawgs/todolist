@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:todolist/pages/sign_up.dart';
+import 'package:todolist/pages/signUpPage.dart';
 import 'package:todolist/auth.dart';
-import 'package:todolist/widget/bottom_navbar.dart';
+import 'package:todolist/widget/bottomNavbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 void main() {

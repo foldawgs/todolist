@@ -27,10 +27,16 @@ class Auth {
     required String email,
     required String password,
   }) async {
-    await _firebaseAuth.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+    try {
+      await _firebaseAuth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      print('Registrasi berhasil untuk: $email');
+    } catch (e) {
+      print('Registrasi gagal: $e');
+      rethrow; // Agar kesalahan dapat dilihat lebih jelas saat debugging
+    }
   }
 
   Future<void> signOut() async {

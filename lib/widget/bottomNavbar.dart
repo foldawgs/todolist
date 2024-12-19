@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:curved_nav_bar/curved_bar/curved_action_bar.dart';
 import 'package:curved_nav_bar/fab_bar/fab_bottom_app_bar_item.dart';
 import 'package:curved_nav_bar/flutter_curved_bottom_nav_bar.dart';
-import 'package:todolist/screen/catatanPage.dart';
+import 'package:todolist/pages/catatanPage.dart';
 import 'package:todolist/design_system/styles/color_collections.dart';
-import 'package:todolist/screen/homePage.dart';
+import 'package:todolist/pages/homePage.dart';
 import 'package:todolist/profile.dart';
-import 'package:todolist/screen/suaraPage.dart';
-import 'package:todolist/tambahCatatan.dart';
+import 'package:todolist/pages/suaraPage.dart';
+import 'package:todolist/pages/tambahCatatanPage.dart';
 
 class BottomNavbar extends StatefulWidget {
   const BottomNavbar({super.key});

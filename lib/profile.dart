@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:todolist/design_system/styles/font_collections.dart';
 import 'package:todolist/design_system/styles/color_collections.dart';
-import 'editProfile.dart'; // Import halaman EditProfile
+import 'package:todolist/auth.dart';
+import 'package:todolist/pages/signInPage.dart';
+import 'package:todolist/pages/editProfilePage.dart';  // Pastikan SignInScreen diimpor
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -50,6 +52,29 @@ class ProfilePage extends StatelessWidget {
               ),
               child: Text(
                 'Edit Profile',
+                style: FontCollections.paragraph1
+                    .copyWith(color: ColorCollections.colorWhite),
+              ),
+            ),
+            SizedBox(height: 16.0),
+            // Tombol Logout
+            ElevatedButton(
+              onPressed: () async {
+                await Auth().signOut();  // Memanggil fungsi signOut dari Auth
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => SignInScreen()), // Navigasi ke SignInScreen
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red[900],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+              ),
+              child: Text(
+                'Logout',
                 style: FontCollections.paragraph1
                     .copyWith(color: ColorCollections.colorWhite),
               ),

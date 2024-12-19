@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:todolist/design_system/styles/font_collections.dart';
 import 'package:todolist/design_system/styles/color_collections.dart';
-import 'package:todolist/formCatatan.dart';  // Pastikan import FormCatatanPage
-import 'package:todolist/formSuara.dart';   // Pastikan import FormSuaraPage
+import 'package:todolist/widget/formCatatan.dart'; // Pastikan import FormCatatanPage
+import 'package:todolist/widget/formKategori.dart';
+import 'package:todolist/widget/formSuara.dart'; // Pastikan import FormSuaraPage
 
 class TambahCatatan extends StatelessWidget {
   const TambahCatatan({super.key});
@@ -57,7 +58,9 @@ class TambahCatatan extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => FormSuaraPage()), // Navigasi ke FormSuaraPage
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          FormSuaraPage()), // Navigasi ke FormSuaraPage
                 );
               },
               child: Container(
@@ -82,25 +85,34 @@ class TambahCatatan extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20),
-            Container(
-              width: double.infinity,
-              child: Row(
-                children: [
-                  Icon(Icons.category, color: ColorCollections.primaryBlue),
-                  SizedBox(width: 20),
-                  Text(
-                    "Kategori",
-                    style: FontCollections.paragraph2,
-                  ),
-                ],
+            GestureDetector(
+              // Menambahkan GestureDetector di kategori
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => FormKategoriPage()),
+                );
+              },
+              child: Container(
+                width: double.infinity,
+                child: Row(
+                  children: [
+                    Icon(Icons.category, color: ColorCollections.primaryBlue),
+                    SizedBox(width: 20),
+                    Text(
+                      "Kategori",
+                      style: FontCollections.paragraph2,
+                    ),
+                  ],
+                ),
+                height: 100,
+                decoration: BoxDecoration(
+                  color: ColorCollections.colorWhite,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.symmetric(horizontal: 20),
               ),
-              height: 100,
-              decoration: BoxDecoration(
-                color: ColorCollections.colorWhite,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              alignment: Alignment.centerLeft,
-              padding: EdgeInsets.symmetric(horizontal: 20),
             ),
             SizedBox(height: 20),
           ],

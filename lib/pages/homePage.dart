@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:todolist/design_system/styles/color_collections.dart';
 import 'package:todolist/design_system/styles/font_collections.dart';
-import 'package:todolist/notifikasi.dart';
+import 'package:todolist/pages/notifikasiPage.dart';
 // import 'package:flutter_svg/flutter_svg.dart';
 
 class homePage extends StatelessWidget {

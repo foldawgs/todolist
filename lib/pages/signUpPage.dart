@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'sign_in.dart';
+import 'package:todolist/auth.dart';
+import 'package:todolist/pages/signInPage.dart';
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -48,6 +48,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: IconButton(
+                      icon: Icon(Icons.close, color: Colors.white),
+                      onPressed: () {
+                        Navigator.pop(context); // Kembali ke layar sebelumnya
+                      },
+                    ),
+                  ),
                   Text(
                     'Sign Up',
                     style: TextStyle(
@@ -163,26 +172,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
 
     try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(email: email, password: password);
+      // Panggil fungsi signUpWithEmailAndPassword dari Auth
+      await Auth().signUpWithEmailAndPassword(email: email, password: password);
 
-      await userCredential.user!.updateDisplayName(username);
-
+      // Berhasil mendaftar, arahkan ke layar SignIn
       _showSnackBar('Akun berhasil dibuat!');
 
+      // Navigasi ke halaman login
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => SignInScreen()),
       );
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'email-already-in-use') {
-        _showSnackBar('Email sudah terdaftar!');
-      } else if (e.code == 'weak-password') {
-        _showSnackBar('Kata sandi terlalu lemah!');
-      } else {
-        _showSnackBar('Error: ${e.message}');
-      }
     } catch (e) {
+      // Tangani kesalahan jika pendaftaran gagal
       _showSnackBar('Terjadi kesalahan. Coba lagi.');
     }
   }
