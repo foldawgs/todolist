@@ -5,7 +5,8 @@ class DBHelper {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final Auth _auth = Auth();
 
-  Future<void> addTodolist(String name, String description, String date, String time, String category) async {
+  Future<void> addTodolist(
+      String name, String description, String date, String time, String category) async {
     String userId = _auth.currentUser?.uid ?? '';
 
     if (userId.isNotEmpty) {
@@ -16,6 +17,7 @@ class DBHelper {
           'date': date,
           'time': time,
           'category': category,
+          'selesai': false, // Field baru dengan default false
           'created_at': FieldValue.serverTimestamp(),
         });
         print('Catatan berhasil disimpan');

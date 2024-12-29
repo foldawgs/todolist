@@ -23,7 +23,7 @@ class _BottomNavbarState extends State<BottomNavbar> {
       actionButton: CurvedActionBar(
           onTab: (value) {
             /// perform action here
-            print(value);
+            // print(value);
           },
           activeIcon: Container(
             padding: EdgeInsets.all(8),

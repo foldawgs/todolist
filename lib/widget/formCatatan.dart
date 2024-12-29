@@ -165,45 +165,68 @@ class _FormCatatanPageState extends State<FormCatatanPage> {
   }
 
   Future<void> _saveNote() async {
+  setState(() {
+    _isLoading = true;
+  });
+
+  String name = _namaController.text;
+  String description = _deskripsiController.text;
+  String date = _tanggalController.text;
+  String time = _waktuController.text;
+  String category = _selectedCategory ?? '';
+
+  if (name.isEmpty ||
+      description.isEmpty ||
+      date.isEmpty ||
+      time.isEmpty ||
+      category.isEmpty) {
     setState(() {
-      _isLoading = true;
+      _isLoading = false;
     });
-
-    String name = _namaController.text;
-    String description = _deskripsiController.text;
-    String date = _tanggalController.text;
-    String time = _waktuController.text;
-    String category = _selectedCategory ?? '';
-
-    if (name.isEmpty ||
-        description.isEmpty ||
-        date.isEmpty ||
-        time.isEmpty ||
-        category.isEmpty) {
-      setState(() {
-        _isLoading = false;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Harap isi semua kolom.')),
-      );
-      return;
-    }
-
-    try {
-      DBHelper dbHelper = DBHelper();
-      await dbHelper.addTodolist(name, description, date, time, category);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Catatan berhasil disimpan.')),
-      );
-      Navigator.pop(context);
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Gagal menyimpan catatan: $e')),
-      );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+    _showTopSnackbar(context, 'Harap isi semua kolom.');
+    return;
   }
+
+  try {
+    DBHelper dbHelper = DBHelper();
+    await dbHelper.addTodolist(name, description, date, time, category);
+    _showTopSnackbar(context, 'Catatan berhasil disimpan.');
+    Navigator.pop(context);
+  } catch (e) {
+    _showTopSnackbar(context, 'Gagal menyimpan catatan: $e');
+  } finally {
+    setState(() {
+      _isLoading = false;
+    });
+  }
+}
+
+void _showTopSnackbar(BuildContext context, String message) {
+  final overlay = Overlay.of(context);
+  final overlayEntry = OverlayEntry(
+    builder: (context) => Positioned(
+      top: MediaQuery.of(context).padding.top + 10,
+      left: 20,
+      right: 20,
+      child: Material(
+        color: Colors.transparent,
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.black87,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            message,
+            style: const TextStyle(color: Colors.white),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  overlay.insert(overlayEntry);
+  Future.delayed(const Duration(seconds: 3)).then((_) => overlayEntry.remove());
+}
+
 }

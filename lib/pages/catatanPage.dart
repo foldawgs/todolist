@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:todolist/design_system/styles/font_collections.dart';
 import 'package:todolist/design_system/styles/color_collections.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class CatatanPage extends StatefulWidget {
   const CatatanPage({super.key});
@@ -41,14 +43,14 @@ class _CatatanPageState extends State<CatatanPage>
           tabs: const [
             Tab(
               child: Text(
-              'Semua Catatan',
-              style: FontCollections.h4,
+                'Semua Catatan',
+                style: FontCollections.h4,
               ),
             ),
             Tab(
               child: Text(
-              'Catatan Selesai',
-              style: FontCollections.h4,
+                'Catatan Selesai',
+                style: FontCollections.h4,
               ),
             ),
           ],
@@ -70,15 +72,53 @@ class _SemuaCatatanPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        _buildCatatan("Catatan 1", "Deskripsi catatan 1"),
-        _buildCatatan("Catatan 2", "Deskripsi catatan 2"),
-      ],
+    final String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
+
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('todolist')
+          .where('selesai', isEqualTo: false)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        if (snapshot.hasError) {
+          return const Center(
+            child: Text('Terjadi kesalahan saat mengambil data.'),
+          );
+        }
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return const Center(
+            child: Text('Tidak ada catatan.'),
+          );
+        }
+
+        final todos = snapshot.data!.docs;
+
+        return ListView.builder(
+          itemCount: todos.length,
+          itemBuilder: (context, index) {
+            final todo = todos[index];
+            return _buildCatatan(
+              todo['name'] ?? '',
+              todo['description'] ?? '',
+              todo['date'] ?? '',
+              todo['selesai'] ?? false,
+              todo.reference,
+            );
+          },
+        );
+      },
     );
   }
 
-  Widget _buildCatatan(String title, String description) {
+  Widget _buildCatatan(String title, String description, String date,
+      bool selesai, DocumentReference reference) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
       padding: const EdgeInsets.all(16.0),
@@ -89,20 +129,28 @@ class _SemuaCatatanPage extends StatelessWidget {
       child: Row(
         children: [
           Checkbox(
-            value: false,
-            onChanged: (bool? value) {},
+            value: selesai,
+            onChanged: (bool? value) async {
+              await reference.update({'selesai': value});
+            },
           ),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(title, style: FontCollections.paragraph2),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(description, style: FontCollections.paragraph2),
-                SizedBox(height: 4),
-                Text("Tanggal: 2024-11-27", style: FontCollections.paragraph2),
+                const SizedBox(height: 4),
+                Text("Tanggal: $date", style: FontCollections.paragraph2),
               ],
             ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.delete, color: Colors.red),
+            onPressed: () async {
+              await reference.delete();
+            },
           ),
         ],
       ),
@@ -115,17 +163,52 @@ class _CatatanSelesaiPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        _buildCatatanSelesai(
-            "Catatan Selesai 1", "Deskripsi catatan selesai 1"),
-        _buildCatatanSelesai(
-            "Catatan Selesai 2", "Deskripsi catatan selesai 2"),
-      ],
+    final String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
+
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('todolist')
+          .where('selesai', isEqualTo: true)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        if (snapshot.hasError) {
+          return const Center(
+            child: Text('Terjadi kesalahan saat mengambil data.'),
+          );
+        }
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return const Center(
+            child: Text('Tidak ada catatan selesai.'),
+          );
+        }
+
+        final todos = snapshot.data!.docs;
+
+        return ListView.builder(
+          itemCount: todos.length,
+          itemBuilder: (context, index) {
+            final todo = todos[index];
+            return _buildCatatanSelesai(
+              todo['name'] ?? '',
+              todo['description'] ?? '',
+              todo['date'] ?? '',
+              todo.reference,
+            );
+          },
+        );
+      },
     );
   }
 
-  Widget _buildCatatanSelesai(String title, String description) {
+  Widget _buildCatatanSelesai(
+      String title, String description, String date, DocumentReference reference) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       padding: const EdgeInsets.all(16.0),
@@ -135,21 +218,29 @@ class _CatatanSelesaiPage extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Checkbox(
-            value: true,
-            onChanged: (bool? value) {},
+          GestureDetector(
+            onTap: () async {
+              await reference.update({'selesai': false});
+            },
+            child: const Icon(Icons.check_circle, color: Colors.green),
           ),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(title, style: FontCollections.paragraph2),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(description, style: FontCollections.paragraph2),
-                SizedBox(height: 4),
-                Text("Tanggal: 2024-11-27", style: FontCollections.paragraph2),
+                const SizedBox(height: 4),
+                Text("Tanggal: $date", style: FontCollections.paragraph2),
               ],
             ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.delete, color: Colors.red),
+            onPressed: () async {
+              await reference.delete();
+            },
           ),
         ],
       ),
