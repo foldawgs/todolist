@@ -5,13 +5,10 @@ class DBHelper {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final Auth _auth = Auth();
 
-  // Menyimpan catatan ke Firestore
   Future<void> addTodolist(String name, String description, String date, String time, String category) async {
-    // Mendapatkan user ID yang sedang login dari Auth
     String userId = _auth.currentUser?.uid ?? '';
 
     if (userId.isNotEmpty) {
-      // Menyimpan data catatan ke dalam sub-koleksi 'todolist' berdasarkan user ID
       try {
         await _firestore.collection('users').doc(userId).collection('todolist').add({
           'name': name,
@@ -24,9 +21,11 @@ class DBHelper {
         print('Catatan berhasil disimpan');
       } catch (e) {
         print('Error saving note: $e');
+        rethrow;
       }
     } else {
       print('User tidak ditemukan');
+      throw Exception('User ID tidak valid.');
     }
   }
 }

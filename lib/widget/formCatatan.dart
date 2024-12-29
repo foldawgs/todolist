@@ -19,6 +19,8 @@ class _FormCatatanPageState extends State<FormCatatanPage> {
 
   final List<String> _categories = ['Kategori 1', 'Kategori 2', 'Kategori 3'];
 
+  bool _isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,13 +31,12 @@ class _FormCatatanPageState extends State<FormCatatanPage> {
           "Form Catatan",
           style: FontCollections.h2,
         ),
-        centerTitle: true, // Menambahkan ini untuk memastikan title di tengah
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            // Nama
             TextField(
               controller: _namaController,
               decoration: InputDecoration(
@@ -46,8 +47,6 @@ class _FormCatatanPageState extends State<FormCatatanPage> {
               ),
             ),
             SizedBox(height: 16.0),
-
-            // Deskripsi
             TextField(
               controller: _deskripsiController,
               decoration: InputDecoration(
@@ -58,8 +57,6 @@ class _FormCatatanPageState extends State<FormCatatanPage> {
               ),
             ),
             SizedBox(height: 16.0),
-
-            // Tanggal
             TextField(
               controller: _tanggalController,
               readOnly: true,
@@ -89,8 +86,6 @@ class _FormCatatanPageState extends State<FormCatatanPage> {
               ),
             ),
             SizedBox(height: 16.0),
-
-            // Waktu
             TextField(
               controller: _waktuController,
               readOnly: true,
@@ -118,8 +113,6 @@ class _FormCatatanPageState extends State<FormCatatanPage> {
               ),
             ),
             SizedBox(height: 16.0),
-
-            // Kategori
             DropdownButtonFormField<String>(
               value: _selectedCategory,
               items: _categories
@@ -143,41 +136,74 @@ class _FormCatatanPageState extends State<FormCatatanPage> {
               ),
             ),
             SizedBox(height: 16.0),
-
-            // Tombol Simpan
-            ElevatedButton(
-              onPressed: () async {
-                // Mendapatkan data dari form
-                String name = _namaController.text;
-                String description = _deskripsiController.text;
-                String date = _tanggalController.text;
-                String time = _waktuController.text;
-                String category = _selectedCategory ?? '';
-
-                // Memanggil DBHelper untuk menyimpan catatan
-                DBHelper dbHelper = DBHelper();
-                await dbHelper.addTodolist(
-                    name, description, date, time, category);
-
-                // Setelah simpan, kembali ke halaman sebelumnya
-                Navigator.pop(context);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: ColorCollections.primaryBlue,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
-              ),
-              child: Text(
-                'Simpan',
-                style: FontCollections.paragraph1
-                    .copyWith(color: ColorCollections.colorWhite),
-              ),
-            )
+            _isLoading
+                ? Center(
+                    child: CircularProgressIndicator(
+                      color: ColorCollections.primaryBlue,
+                    ),
+                  )
+                : ElevatedButton(
+                    onPressed: _saveNote,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorCollections.primaryBlue,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 30.0, vertical: 10.0),
+                    ),
+                    child: Text(
+                      'Simpan',
+                      style: FontCollections.paragraph1
+                          .copyWith(color: ColorCollections.colorWhite),
+                    ),
+                  ),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> _saveNote() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    String name = _namaController.text;
+    String description = _deskripsiController.text;
+    String date = _tanggalController.text;
+    String time = _waktuController.text;
+    String category = _selectedCategory ?? '';
+
+    if (name.isEmpty ||
+        description.isEmpty ||
+        date.isEmpty ||
+        time.isEmpty ||
+        category.isEmpty) {
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Harap isi semua kolom.')),
+      );
+      return;
+    }
+
+    try {
+      DBHelper dbHelper = DBHelper();
+      await dbHelper.addTodolist(name, description, date, time, category);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Catatan berhasil disimpan.')),
+      );
+      Navigator.pop(context);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal menyimpan catatan: $e')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 }
