@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:todolist/design_system/styles/font_collections.dart';
 import 'package:todolist/design_system/styles/color_collections.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:todolist/pages/editcatatanPages.dart'; // Pastikan import ini mengarah ke file EditCatatanPage
 
 class CatatanPage extends StatefulWidget {
   const CatatanPage({super.key});
@@ -104,12 +105,33 @@ class _SemuaCatatanPage extends StatelessWidget {
           itemCount: todos.length,
           itemBuilder: (context, index) {
             final todo = todos[index];
-            return _buildCatatan(
-              todo['name'] ?? '',
-              todo['description'] ?? '',
-              todo['date'] ?? '',
-              todo['selesai'] ?? false,
-              todo.reference,
+            final data = todo.data() as Map<String, dynamic>;
+
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditCatatanPage(
+                      reference: todo.reference,
+                      name: data['name'] ?? '',
+                      description: data['description'] ?? '',
+                      date: data['date'] ?? '',
+                      time: data['time'] ?? '',
+                      category: data['category'] ?? '',
+                    ),
+                  ),
+                );
+              },
+              child: _buildCatatan(
+                data['name'] ?? '',
+                data['description'] ?? '',
+                data['date'] ?? '',
+                data['time'] ?? '',
+                data['category'] ?? '',
+                data['selesai'] ?? false,
+                todo.reference,
+              ),
             );
           },
         );
@@ -118,7 +140,7 @@ class _SemuaCatatanPage extends StatelessWidget {
   }
 
   Widget _buildCatatan(String title, String description, String date,
-      bool selesai, DocumentReference reference) {
+      String time, String category, bool selesai, DocumentReference reference) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
       padding: const EdgeInsets.all(16.0),
@@ -143,6 +165,8 @@ class _SemuaCatatanPage extends StatelessWidget {
                 Text(description, style: FontCollections.paragraph2),
                 const SizedBox(height: 4),
                 Text("Tanggal: $date", style: FontCollections.paragraph2),
+                Text("Waktu: $time", style: FontCollections.paragraph2),
+                Text("Kategori: $category", style: FontCollections.paragraph2),
               ],
             ),
           ),
@@ -195,11 +219,32 @@ class _CatatanSelesaiPage extends StatelessWidget {
           itemCount: todos.length,
           itemBuilder: (context, index) {
             final todo = todos[index];
-            return _buildCatatanSelesai(
-              todo['name'] ?? '',
-              todo['description'] ?? '',
-              todo['date'] ?? '',
-              todo.reference,
+            final data = todo.data() as Map<String, dynamic>;
+
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditCatatanPage(
+                      reference: todo.reference,
+                      name: data['name'] ?? '',
+                      description: data['description'] ?? '',
+                      date: data['date'] ?? '',
+                      time: data['time'] ?? '',
+                      category: data['category'] ?? '',
+                    ),
+                  ),
+                );
+              },
+              child: _buildCatatanSelesai(
+                data['name'] ?? '',
+                data['description'] ?? '',
+                data['date'] ?? '',
+                data['time'] ?? '',
+                data['category'] ?? '',
+                todo.reference,
+              ),
             );
           },
         );
@@ -207,8 +252,8 @@ class _CatatanSelesaiPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCatatanSelesai(
-      String title, String description, String date, DocumentReference reference) {
+  Widget _buildCatatanSelesai(String title, String description, String date,
+      String time, String category, DocumentReference reference) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       padding: const EdgeInsets.all(16.0),
@@ -233,6 +278,8 @@ class _CatatanSelesaiPage extends StatelessWidget {
                 Text(description, style: FontCollections.paragraph2),
                 const SizedBox(height: 4),
                 Text("Tanggal: $date", style: FontCollections.paragraph2),
+                Text("Waktu: $time", style: FontCollections.paragraph2),
+                Text("Kategori: $category", style: FontCollections.paragraph2),
               ],
             ),
           ),
