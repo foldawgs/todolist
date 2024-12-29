@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todolist/dbHelper.dart';
 import 'package:todolist/design_system/styles/font_collections.dart';
 import 'package:todolist/design_system/styles/color_collections.dart';
 
@@ -65,7 +66,8 @@ class _FormCatatanPageState extends State<FormCatatanPage> {
               decoration: InputDecoration(
                 labelText: 'Tanggal',
                 suffixIcon: IconButton(
-                  icon: Icon(Icons.calendar_today, color: ColorCollections.primaryBlue),
+                  icon: Icon(Icons.calendar_today,
+                      color: ColorCollections.primaryBlue),
                   onPressed: () async {
                     DateTime? date = await showDatePicker(
                       context: context,
@@ -95,7 +97,8 @@ class _FormCatatanPageState extends State<FormCatatanPage> {
               decoration: InputDecoration(
                 labelText: 'Waktu',
                 suffixIcon: IconButton(
-                  icon: Icon(Icons.access_time, color: ColorCollections.primaryBlue),
+                  icon: Icon(Icons.access_time,
+                      color: ColorCollections.primaryBlue),
                   onPressed: () async {
                     TimeOfDay? time = await showTimePicker(
                       context: context,
@@ -143,13 +146,18 @@ class _FormCatatanPageState extends State<FormCatatanPage> {
 
             // Tombol Simpan
             ElevatedButton(
-              onPressed: () {
-                // Logic untuk menyimpan data
-                print('Nama: ${_namaController.text}');
-                print('Deskripsi: ${_deskripsiController.text}');
-                print('Tanggal: ${_tanggalController.text}');
-                print('Waktu: ${_waktuController.text}');
-                print('Kategori: $_selectedCategory');
+              onPressed: () async {
+                // Mendapatkan data dari form
+                String name = _namaController.text;
+                String description = _deskripsiController.text;
+                String date = _tanggalController.text;
+                String time = _waktuController.text;
+                String category = _selectedCategory ?? '';
+
+                // Memanggil DBHelper untuk menyimpan catatan
+                DBHelper dbHelper = DBHelper();
+                await dbHelper.addTodolist(
+                    name, description, date, time, category);
 
                 // Setelah simpan, kembali ke halaman sebelumnya
                 Navigator.pop(context);
@@ -163,9 +171,10 @@ class _FormCatatanPageState extends State<FormCatatanPage> {
               ),
               child: Text(
                 'Simpan',
-                style: FontCollections.paragraph1.copyWith(color: ColorCollections.colorWhite),
+                style: FontCollections.paragraph1
+                    .copyWith(color: ColorCollections.colorWhite),
               ),
-            ),
+            )
           ],
         ),
       ),

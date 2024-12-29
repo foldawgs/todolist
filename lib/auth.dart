@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class Auth {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   User? get currentUser => _firebaseAuth.currentUser;
 
@@ -16,9 +18,7 @@ class Auth {
         email: email,
         password: password,
       );
-      print('Login berhasil untuk: $email');
     } catch (e) {
-      print('Login gagal: $e');
       rethrow;
     }
   }
@@ -26,16 +26,25 @@ class Auth {
   Future<void> signUpWithEmailAndPassword({
     required String email,
     required String password,
+    required String username,
+    required String job,
   }) async {
     try {
-      await _firebaseAuth.createUserWithEmailAndPassword(
+      // Membuat pengguna baru
+      UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-      print('Registrasi berhasil untuk: $email');
+
+      // Menyimpan data pengguna ke Firestore
+      await _firestore.collection('users').doc(userCredential.user!.uid).set({
+        'email': email,
+        'username': username,
+        'job': job,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
     } catch (e) {
-      print('Registrasi gagal: $e');
-      rethrow; // Agar kesalahan dapat dilihat lebih jelas saat debugging
+      rethrow;
     }
   }
 

@@ -1,11 +1,24 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:todolist/design_system/styles/color_collections.dart';
 import 'package:todolist/design_system/styles/font_collections.dart';
 import 'package:todolist/pages/notifikasiPage.dart';
-// import 'package:flutter_svg/flutter_svg.dart';
 
 class homePage extends StatelessWidget {
   const homePage({super.key});
+
+  Future<String> getUsername() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final userData = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+      return userData['username'] ?? 'User';
+    }
+    return 'User';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +40,26 @@ class homePage extends StatelessWidget {
               'Hello!',
               style: FontCollections.h4,
             ),
-            Text(
-              'User!',
-              style: FontCollections.h2,
+            FutureBuilder<String>(
+              future: getUsername(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Text(
+                    'Loading...',
+                    style: FontCollections.h2,
+                  );
+                } else if (snapshot.hasError) {
+                  return Text(
+                    'Error!',
+                    style: FontCollections.h2,
+                  );
+                } else {
+                  return Text(
+                    snapshot.data ?? 'User',
+                    style: FontCollections.h2,
+                  );
+                }
+              },
             ),
           ],
         ),
@@ -225,7 +255,7 @@ class homePage extends StatelessWidget {
                           Text(
                             'Quiz Kuliah',
                             style: FontCollections.h2,
-                            textAlign:TextAlign.start,
+                            textAlign: TextAlign.start,
                           ),
                         ],
                       ),
@@ -254,7 +284,7 @@ class homePage extends StatelessWidget {
                           Text(
                             'Tugas Kelompok',
                             style: FontCollections.h2,
-                            textAlign:TextAlign.start,
+                            textAlign: TextAlign.start,
                           ),
                         ],
                       ),
@@ -283,7 +313,7 @@ class homePage extends StatelessWidget {
                           Text(
                             'presentasi',
                             style: FontCollections.h2,
-                            textAlign:TextAlign.start,
+                            textAlign: TextAlign.start,
                           ),
                         ],
                       ),

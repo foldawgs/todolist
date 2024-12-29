@@ -161,33 +161,39 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   void _submitForm() async {
-    String email = emailController.text.trim();
-    String password = passwordController.text.trim();
-    String username = usernameController.text.trim();
-    String job = jobController.text.trim();
+  String email = emailController.text.trim();
+  String password = passwordController.text.trim();
+  String username = usernameController.text.trim();
+  String job = jobController.text.trim();
 
-    if (email.isEmpty || password.isEmpty || username.isEmpty || job.isEmpty) {
-      _showSnackBar('Semua field harus diisi!');
-      return;
-    }
-
-    try {
-      // Panggil fungsi signUpWithEmailAndPassword dari Auth
-      await Auth().signUpWithEmailAndPassword(email: email, password: password);
-
-      // Berhasil mendaftar, arahkan ke layar SignIn
-      _showSnackBar('Akun berhasil dibuat!');
-
-      // Navigasi ke halaman login
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => SignInScreen()),
-      );
-    } catch (e) {
-      // Tangani kesalahan jika pendaftaran gagal
-      _showSnackBar('Terjadi kesalahan. Coba lagi.');
-    }
+  if (email.isEmpty || password.isEmpty || username.isEmpty || job.isEmpty) {
+    _showSnackBar('Semua field harus diisi!');
+    return;
   }
+
+  try {
+    // Mendaftar dan menyimpan data ke Firestore
+    await Auth().signUpWithEmailAndPassword(
+      email: email,
+      password: password,
+      username: username,
+      job: job,
+    );
+
+    // Berhasil mendaftar
+    _showSnackBar('Akun berhasil dibuat!');
+
+    // Navigasi ke halaman login
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => SignInScreen()),
+    );
+  } catch (e) {
+    // Tangani kesalahan jika pendaftaran gagal
+    _showSnackBar('Terjadi kesalahan. Coba lagi.');
+  }
+}
+
 
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
