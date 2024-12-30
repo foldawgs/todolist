@@ -1,80 +1,75 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:todolist/design_system/styles/font_collections.dart';
-import 'package:todolist/design_system/styles/color_collections.dart';
+import 'package:flutter_sound/flutter_sound.dart';
+import 'package:path_provider/path_provider.dart';
 
 class CatatanSuaraPage extends StatelessWidget {
   const CatatanSuaraPage({super.key});
 
+  Stream<List<Map<String, dynamic>>> _readMetadata() async* {
+    while (true) {
+      await Future.delayed(Duration(seconds: 1));
+      try {
+        Directory appDocDir = await getApplicationDocumentsDirectory();
+        String metadataPath = '${appDocDir.path}/audio_metadata.json';
+
+        File metadataFile = File(metadataPath);
+        if (await metadataFile.exists()) {
+          String data = await metadataFile.readAsString();
+          List<Map<String, dynamic>> metadataList =
+              List<Map<String, dynamic>>.from(jsonDecode(data));
+          yield metadataList;
+        } else {
+          yield [];
+        }
+      } catch (e) {
+        print('Error reading metadata: $e');
+        yield [];
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorCollections.backgroundColor,
-      appBar: AppBar(
-        backgroundColor: ColorCollections.backgroundColor,
-        scrolledUnderElevation: 0,
-        title: Center(
-          child: Text(
-            "Catatan Suara",
-            style: FontCollections.h2,
-          ),
-        ),
-      ),
-      body: Column(
-        // Column untuk menampung Expanded dan ListView
-        children: [
-          Expanded(
-            // Gunakan Expanded untuk membuat ListView mengisi sisa ruang
-            child: ListView(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              children: [
-                Container(
-                  width: double.infinity,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    color: ColorCollections.colorWhite,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  alignment: Alignment.centerLeft,
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.play_arrow, // Ikon play
-                        color: ColorCollections
-                            .primaryBlue, // Sesuaikan warna ikon
-                      ),
-                      SizedBox(
-                          width: 10), // Memberikan jarak antara ikon dan teks
-                      Column(
-                        crossAxisAlignment:
-                            CrossAxisAlignment.start, // Agar teks rata kiri
-                        mainAxisAlignment:
-                            MainAxisAlignment.center, // Vertikal center
-                        children: [
-                          Text(
-                            'Latihan presentasi',
-                            style: FontCollections
-                                .h3, // Ganti dengan font style h3
-                          ),
-                          SizedBox(
-                              height:
-                                  8.0), // Jarak antara teks pertama dan kedua
-                          Text(
-                            'Presentasi mata kuliah manajemen proses.',
-                            style: FontCollections
-                                .paragraph3, // Ganti dengan font style paragraf
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 20),
-                // Konten tambahan lainnya bisa ditambahkan di sini
-              ],
-            ),
-          ),
-        ],
+      appBar: AppBar(title: Text("Catatan Suara")),
+      body: StreamBuilder<List<Map<String, dynamic>>>(
+        stream: _readMetadata(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(
+              child: Text('Belum ada catatan suara'),
+            );
+          }
+
+          List<Map<String, dynamic>> audioNotes = snapshot.data!;
+
+          return ListView.builder(
+            itemCount: audioNotes.length,
+            itemBuilder: (context, index) {
+              final note = audioNotes[index];
+              return ListTile(
+                leading: Icon(Icons.play_arrow),
+                title: Text(note['fileName']),
+                subtitle: Text(note['description']),
+                onTap: () async {
+                  try {
+                    FlutterSoundPlayer player = FlutterSoundPlayer();
+                    await player.openPlayer();
+                    await player.startPlayer(fromURI: note['filePath']);
+                  } catch (e) {
+                    print('Error playing audio: $e');
+                  }
+                },
+              );
+            },
+          );
+        },
       ),
     );
   }
