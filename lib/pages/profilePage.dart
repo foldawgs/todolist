@@ -28,6 +28,21 @@ class ProfilePage extends StatelessWidget {
     };
   }
 
+  // Menambahkan method untuk menghitung jumlah catatan
+  Future<int> getNoteCount() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('todolist')
+          .where('selesai', isEqualTo: false) // Catatan yang belum selesai
+          .get();
+      return querySnapshot.docs.length;
+    }
+    return 0;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,7 +96,8 @@ class ProfilePage extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
-                      padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 30.0, vertical: 10.0),
                     ),
                     child: Text(
                       'Edit Profile',
@@ -103,7 +119,8 @@ class ProfilePage extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
-                      padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 30.0, vertical: 10.0),
                     ),
                     child: Text(
                       'Logout',
@@ -112,23 +129,36 @@ class ProfilePage extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 16.0),
-                  Expanded(
-                    child: ListView(
-                      children: [
-                        buildInfoCard(
-                          context,
-                          icon: Icons.list,
-                          label: "25 Catatan",
-                        ),
-                        SizedBox(height: 20),
-                        buildInfoCard(
-                          context,
-                          icon: Icons.mic,
-                          label: "5 Catatan Suara",
-                        ),
-                        SizedBox(height: 20),
-                      ],
-                    ),
+                  // Menggunakan FutureBuilder untuk menampilkan jumlah catatan
+                  FutureBuilder<int>(
+                    future: getNoteCount(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      } else if (snapshot.hasError) {
+                        return const Text('Terjadi kesalahan');
+                      } else if (snapshot.hasData) {
+                        final noteCount = snapshot.data ?? 0;
+                        return Column(
+                          children: [
+                            buildInfoCard(
+                              context,
+                              icon: Icons.list,
+                              label: "$noteCount Catatan",
+                            ),
+                            SizedBox(height: 20),
+                            buildInfoCard(
+                              context,
+                              icon: Icons.mic,
+                              label: "5 Catatan Suara",
+                            ),
+                            SizedBox(height: 20),
+                          ],
+                        );
+                      } else {
+                        return const SizedBox.shrink();
+                      }
+                    },
                   ),
                 ],
               );
@@ -139,7 +169,8 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget buildInfoCard(BuildContext context, {required IconData icon, required String label}) {
+  Widget buildInfoCard(BuildContext context,
+      {required IconData icon, required String label}) {
     return Container(
       width: double.infinity,
       child: Row(

@@ -100,16 +100,45 @@ class homePage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          '25 Catatan',
-                          style: FontCollections.h2
-                              .copyWith(color: ColorCollections.colorWhite),
+                        StreamBuilder<QuerySnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(FirebaseAuth.instance.currentUser?.uid)
+                              .collection('todolist')
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Text(
+                                'Menghitung...',
+                                style: FontCollections.h2.copyWith(
+                                  color: ColorCollections.colorWhite,
+                                ),
+                              );
+                            }
+                            if (snapshot.hasError) {
+                              return Text(
+                                'Error!',
+                                style: FontCollections.h2.copyWith(
+                                  color: ColorCollections.colorWhite,
+                                ),
+                              );
+                            }
+                            final todoCount = snapshot.data?.docs.length ?? 0;
+                            return Text(
+                              '$todoCount Catatan',
+                              style: FontCollections.h2.copyWith(
+                                color: ColorCollections.colorWhite,
+                              ),
+                            );
+                          },
                         ),
                         SizedBox(height: 8.0),
                         Text(
                           'Anda sangat produktif \nsekali, semangat!',
-                          style: FontCollections.paragraph3
-                              .copyWith(color: ColorCollections.colorWhite),
+                          style: FontCollections.paragraph3.copyWith(
+                            color: ColorCollections.colorWhite,
+                          ),
                           maxLines: 2, // Batasi teks hingga 2 baris
                           overflow: TextOverflow
                               .ellipsis, // Potong teks jika lebih panjang
