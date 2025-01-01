@@ -4,6 +4,7 @@ import 'package:todolist/design_system/styles/font_collections.dart';
 import 'package:todolist/design_system/styles/color_collections.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:todolist/pages/editcatatanPages.dart'; // Pastikan import ini mengarah ke file EditCatatanPage
+import 'package:intl/intl.dart'; // Import intl untuk format tanggal
 
 class CatatanPage extends StatefulWidget {
   const CatatanPage({super.key});
@@ -107,6 +108,14 @@ class _SemuaCatatanPage extends StatelessWidget {
             final todo = todos[index];
             final data = todo.data() as Map<String, dynamic>;
 
+            final date = (data['date'] as Timestamp?)?.toDate();
+            final formattedDate = date != null
+                ? DateFormat('d MMMM yyyy').format(date)
+                : 'Tidak ada tanggal';
+            final time = date != null
+                ? DateFormat('HH:mm').format(date)
+                : 'Tidak ada waktu';
+
             return GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -116,8 +125,8 @@ class _SemuaCatatanPage extends StatelessWidget {
                       reference: todo.reference,
                       name: data['name'] ?? '',
                       description: data['description'] ?? '',
-                      date: data['date'] ?? '',
-                      time: data['time'] ?? '',
+                      date: formattedDate,
+                      time: time,
                       category: data['category'] ?? '',
                     ),
                   ),
@@ -126,8 +135,8 @@ class _SemuaCatatanPage extends StatelessWidget {
               child: _buildCatatan(
                 data['name'] ?? '',
                 data['description'] ?? '',
-                data['date'] ?? '',
-                data['time'] ?? '',
+                formattedDate,
+                time,
                 data['category'] ?? '',
                 data['selesai'] ?? false,
                 todo.reference,
@@ -166,7 +175,7 @@ class _SemuaCatatanPage extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text("Tanggal: $date", style: FontCollections.paragraph2),
                 Text("Waktu: $time", style: FontCollections.paragraph2),
-                Text("Kategori: $category", style: FontCollections.paragraph2),
+                Text("$category", style: FontCollections.paragraph2),
               ],
             ),
           ),
@@ -221,6 +230,14 @@ class _CatatanSelesaiPage extends StatelessWidget {
             final todo = todos[index];
             final data = todo.data() as Map<String, dynamic>;
 
+            final date = (data['date'] as Timestamp?)?.toDate();
+            final formattedDate = date != null
+                ? DateFormat('d MMMM yyyy').format(date)
+                : 'Tidak ada tanggal';
+            final time = date != null
+                ? DateFormat('HH:mm').format(date)
+                : 'Tidak ada waktu';
+
             return GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -230,8 +247,8 @@ class _CatatanSelesaiPage extends StatelessWidget {
                       reference: todo.reference,
                       name: data['name'] ?? '',
                       description: data['description'] ?? '',
-                      date: data['date'] ?? '',
-                      time: data['time'] ?? '',
+                      date: formattedDate,
+                      time: time,
                       category: data['category'] ?? '',
                     ),
                   ),
@@ -240,8 +257,8 @@ class _CatatanSelesaiPage extends StatelessWidget {
               child: _buildCatatanSelesai(
                 data['name'] ?? '',
                 data['description'] ?? '',
-                data['date'] ?? '',
-                data['time'] ?? '',
+                formattedDate,
+                time,
                 data['category'] ?? '',
                 todo.reference,
               ),
@@ -279,7 +296,7 @@ class _CatatanSelesaiPage extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text("Tanggal: $date", style: FontCollections.paragraph2),
                 Text("Waktu: $time", style: FontCollections.paragraph2),
-                Text("Kategori: $category", style: FontCollections.paragraph2),
+                Text("$category", style: FontCollections.paragraph2),
               ],
             ),
           ),

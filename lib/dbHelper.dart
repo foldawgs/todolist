@@ -11,15 +11,27 @@ class DBHelper {
 
     if (userId.isNotEmpty) {
       try {
+        // Menggabungkan date dan time menjadi DateTime
+        List<String> dateParts = date.split('-');
+        List<String> timeParts = time.split(':');
+        DateTime dateTime = DateTime(
+          int.parse(dateParts[2]), // year
+          int.parse(dateParts[1]), // month
+          int.parse(dateParts[0]), // day
+          int.parse(timeParts[0]), // hour
+          int.parse(timeParts[1]), // minute
+        );
+
+        // Menyimpan data ke Firestore
         await _firestore.collection('users').doc(userId).collection('todolist').add({
           'name': name,
           'description': description,
-          'date': date,
-          'time': time,
+          'date': dateTime, // Simpan sebagai Timestamp
           'category': category,
           'selesai': false, // Field baru dengan default false
-          'created_at': FieldValue.serverTimestamp(),
+          'created_at': FieldValue.serverTimestamp(), // Menyimpan timestamp server
         });
+
         print('Catatan berhasil disimpan');
       } catch (e) {
         print('Error saving note: $e');

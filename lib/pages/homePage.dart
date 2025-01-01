@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:todolist/design_system/styles/color_collections.dart';
 import 'package:todolist/design_system/styles/font_collections.dart';
 import 'package:todolist/pages/notifikasiPage.dart';
+import 'package:intl/intl.dart';
 
 class homePage extends StatelessWidget {
   const homePage({super.key});
@@ -139,13 +140,15 @@ class homePage extends StatelessWidget {
               height: 20.0,
             ),
             Container(
-              height: 120,
+              height: 130,
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
                     .collection('users')
                     .doc(FirebaseAuth.instance.currentUser?.uid)
                     .collection('todolist')
-                    .where('selesai', isEqualTo: false)
+                    .where('selesai',
+                        isEqualTo:
+                            false) // Menampilkan catatan yang belum selesai
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -155,18 +158,18 @@ class homePage extends StatelessWidget {
                   }
                   if (snapshot.hasError) {
                     return const Center(
-                        child: Text(
+                      child: Text(
                         'Terjadi kesalahan saat mengambil data.',
                         style: FontCollections.paragraph1,
-                        ),
+                      ),
                     );
                   }
                   if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                     return const Center(
-                        child: Text(
+                      child: Text(
                         'Tidak ada catatan, bisa santuy dulu!',
                         style: FontCollections.paragraph1,
-                        ),
+                      ),
                     );
                   }
                   final todos = snapshot.data!.docs;
@@ -195,13 +198,17 @@ class homePage extends StatelessWidget {
                             Text(
                               data['category'] ?? 'Tanpa Kategori',
                               style: FontCollections.paragraph3.copyWith(
-                                color: ColorCollections
-                                    .primaryBlue, // Menambahkan warna untuk kategori
+                                color: ColorCollections.primaryBlue,
                               ),
                             ),
                             const SizedBox(height: 8.0),
                             Text(
-                              '${data['date'] ?? ''} ${data['time'] ?? ''}',
+                              'Tanggal: ${DateFormat('d MMMM yyyy').format((data['date'] as Timestamp?)?.toDate() ?? DateTime.now())}',
+                              style: FontCollections.paragraph3,
+                            ),
+                            SizedBox(height: 8.0),
+                            Text(
+                              'Pukul: ${DateFormat('HH:mm').format((data['date'] as Timestamp?)?.toDate() ?? DateTime.now())}',
                               style: FontCollections.paragraph3,
                             ),
                           ],

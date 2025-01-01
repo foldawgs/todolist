@@ -43,11 +43,6 @@ class _EditCatatanPageState extends State<EditCatatanPage> {
     _dateController = TextEditingController(text: widget.date);
     _timeController = TextEditingController(text: widget.time);
     _selectedCategory = widget.category;
-
-    // Validasi jika kategori yang diambil tidak ada dalam daftar
-    if (!_categories.contains(_selectedCategory)) {
-      _categories.add(_selectedCategory);
-    }
   }
 
   @override
@@ -164,8 +159,7 @@ class _EditCatatanPageState extends State<EditCatatanPage> {
                           value: category,
                           child: Text(
                             category,
-                            style: FontCollections.paragraph1
-        ,
+                            style: FontCollections.paragraph1,
                           ),
                         ))
                     .toList(),
@@ -186,13 +180,25 @@ class _EditCatatanPageState extends State<EditCatatanPage> {
               ElevatedButton(
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
+                    // Menggabungkan date dan time menjadi DateTime
+                    List<String> dateParts = _dateController.text.split('-');
+                    List<String> timeParts = _timeController.text.split(':');
+                    DateTime dateTime = DateTime(
+                      int.parse(dateParts[0]), // year
+                      int.parse(dateParts[1]), // month
+                      int.parse(dateParts[2]), // day
+                      int.parse(timeParts[0]), // hour
+                      int.parse(timeParts[1]), // minute
+                    );
+
+                    // Simpan ke Firestore
                     await widget.reference.update({
                       'name': _nameController.text,
                       'description': _descriptionController.text,
-                      'date': _dateController.text,
-                      'time': _timeController.text,
+                      'date': dateTime, // Tanggal sebagai Timestamp
                       'category': _selectedCategory,
                     });
+
                     Navigator.pop(context);
                   }
                 },
@@ -207,7 +213,7 @@ class _EditCatatanPageState extends State<EditCatatanPage> {
                 child: Text(
                   "Simpan",
                   style: FontCollections.paragraph1
-                    .copyWith(color: ColorCollections.colorWhite),
+                      .copyWith(color: ColorCollections.colorWhite),
                 ),
               ),
             ],
