@@ -17,120 +17,126 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          Expanded(
-            flex: 4,
-            child: Container(
-              width: double.infinity,
-              color: Colors.white,
-              child: Center(
-                child: Image.asset(
-                  'assets/images/sign_up_sign_in.png',
-                  height: 280,
-                  fit: BoxFit.contain,
-                ),
-              ),
-            ),
+      body: SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight: MediaQuery.of(context).size.height,
           ),
-          Expanded(
-            flex: 6,
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-              decoration: BoxDecoration(
-                color: Color(0xFF002B5B),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  topRight: Radius.circular(30),
+          child: IntrinsicHeight(
+            child: Column(
+              children: [
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.4,
+                  width: double.infinity,
+                  color: Colors.white,
+                  child: Center(
+                    child: Image.asset(
+                      'assets/images/sign_up_sign_in.png',
+                      height: 200,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
                 ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: IconButton(
-                      icon: Icon(Icons.close, color: Colors.white),
-                      onPressed: () {
-                        Navigator.pop(context); // Kembali ke layar sebelumnya
-                      },
-                    ),
-                  ),
-                  Text(
-                    'Sign Up',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Buat akun Anda - nikmati layanan kami dengan fitur-fitur terbaik',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white70,
-                    ),
-                  ),
-                  SizedBox(height: 25),
-                  _buildTextField(
-                    controller: emailController,
-                    icon: Icons.email,
-                    hintText: 'Email',
-                  ),
-                  SizedBox(height: 20),
-                  _buildTextField(
-                    controller: usernameController,
-                    icon: Icons.person,
-                    hintText: 'Username',
-                  ),
-                  SizedBox(height: 20),
-                  _buildTextField(
-                    controller: jobController,
-                    icon: Icons.work,
-                    hintText: 'Pekerjaan',
-                  ),
-                  SizedBox(height: 20),
-                  _buildTextField(
-                    controller: passwordController,
-                    icon: Icons.lock,
-                    hintText: 'Password',
-                    isPassword: true,
-                  ),
-                  SizedBox(height: 30),
-                  Center(
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          _submitForm();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Color(0xFF002B5B),
-                          padding: EdgeInsets.symmetric(
-                            vertical: 15,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                        ),
-                        child: Text(
-                          'Buat Akun Saya',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                Expanded(
+                  child: Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                    decoration: BoxDecoration(
+                      color: Color(0xFF002B5B),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
                       ),
                     ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: IconButton(
+                            icon: Icon(Icons.close, color: Colors.white),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ),
+                        Text(
+                          'Sign Up',
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          'Buat akun Anda - nikmati layanan kami dengan fitur-fitur terbaik',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.white70,
+                          ),
+                        ),
+                        SizedBox(height: 25),
+                        _buildTextField(
+                          controller: emailController,
+                          icon: Icons.email,
+                          hintText: 'Email',
+                        ),
+                        SizedBox(height: 20),
+                        _buildTextField(
+                          controller: usernameController,
+                          icon: Icons.person,
+                          hintText: 'Username',
+                        ),
+                        SizedBox(height: 20),
+                        _buildTextField(
+                          controller: jobController,
+                          icon: Icons.work,
+                          hintText: 'Pekerjaan',
+                        ),
+                        SizedBox(height: 20),
+                        _buildTextField(
+                          controller: passwordController,
+                          icon: Icons.lock,
+                          hintText: 'Password',
+                          isPassword: true,
+                        ),
+                        SizedBox(height: 30),
+                        Center(
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.9,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                _submitForm();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                foregroundColor: Color(0xFF002B5B),
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 15,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                              ),
+                              child: Text(
+                                'Buat Akun Saya',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -161,39 +167,38 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   void _submitForm() async {
-  String email = emailController.text.trim();
-  String password = passwordController.text.trim();
-  String username = usernameController.text.trim();
-  String job = jobController.text.trim();
+    String email = emailController.text.trim();
+    String password = passwordController.text.trim();
+    String username = usernameController.text.trim();
+    String job = jobController.text.trim();
 
-  if (email.isEmpty || password.isEmpty || username.isEmpty || job.isEmpty) {
-    _showSnackBar('Semua field harus diisi!');
-    return;
+    if (email.isEmpty || password.isEmpty || username.isEmpty || job.isEmpty) {
+      _showSnackBar('Semua field harus diisi!');
+      return;
+    }
+
+    try {
+      // Mendaftar dan menyimpan data ke Firestore
+      await Auth().signUpWithEmailAndPassword(
+        email: email,
+        password: password,
+        username: username,
+        job: job,
+      );
+
+      // Berhasil mendaftar
+      _showSnackBar('Akun berhasil dibuat!');
+
+      // Navigasi ke halaman login
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => SignInScreen()),
+      );
+    } catch (e) {
+      // Tangani kesalahan jika pendaftaran gagal
+      _showSnackBar('Terjadi kesalahan. Coba lagi.');
+    }
   }
-
-  try {
-    // Mendaftar dan menyimpan data ke Firestore
-    await Auth().signUpWithEmailAndPassword(
-      email: email,
-      password: password,
-      username: username,
-      job: job,
-    );
-
-    // Berhasil mendaftar
-    _showSnackBar('Akun berhasil dibuat!');
-
-    // Navigasi ke halaman login
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => SignInScreen()),
-    );
-  } catch (e) {
-    // Tangani kesalahan jika pendaftaran gagal
-    _showSnackBar('Terjadi kesalahan. Coba lagi.');
-  }
-}
-
 
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(

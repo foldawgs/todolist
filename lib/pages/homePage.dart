@@ -65,7 +65,8 @@ class homePage extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.notifications, color: ColorCollections.primaryBlue),
+            icon:
+                Icon(Icons.notifications, color: ColorCollections.primaryBlue),
             onPressed: () {
               Navigator.push(
                 context,
@@ -108,13 +109,17 @@ class homePage extends StatelessWidget {
                           'Anda sangat produktif \nsekali, semangat!',
                           style: FontCollections.paragraph3
                               .copyWith(color: ColorCollections.colorWhite),
+                          maxLines: 2, // Batasi teks hingga 2 baris
+                          overflow: TextOverflow
+                              .ellipsis, // Potong teks jika lebih panjang
                         ),
                       ],
                     ),
                     Image.asset(
                       'assets/images/depan.png',
-                      height: 200.0,
-                      width: 200.0,
+                      height: MediaQuery.of(context).size.height * 0.2,
+                      width: MediaQuery.of(context).size.width * 0.4,
+                      fit: BoxFit.contain,
                     ),
                   ],
                 ),
@@ -126,7 +131,7 @@ class homePage extends StatelessWidget {
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'Deadline',
+                'Catatan',
                 style: FontCollections.h2,
               ),
             ),
@@ -135,88 +140,76 @@ class homePage extends StatelessWidget {
             ),
             Container(
               height: 120,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  Container(
-                    width: 200,
-                    padding: const EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15.0),
-                      color: ColorCollections.colorWhite,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Quiz PPB',
-                          style: FontCollections.h3,
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(FirebaseAuth.instance.currentUser?.uid)
+                    .collection('todolist')
+                    .where('selesai', isEqualTo: false)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  if (snapshot.hasError) {
+                    return const Center(
+                        child: Text(
+                        'Terjadi kesalahan saat mengambil data.',
+                        style: FontCollections.paragraph1,
                         ),
-                        SizedBox(height: 8.0),
-                        Text(
-                          'Sabtu, 3 Oktober 2024 \n23:00 pm',
-                          style: FontCollections.paragraph3,
+                    );
+                  }
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return const Center(
+                        child: Text(
+                        'Tidak ada catatan, bisa santuy dulu!',
+                        style: FontCollections.paragraph1,
                         ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    width: 20.0,
-                  ),
-                  Container(
-                    width: 200,
-                    padding: const EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15.0),
-                      color: ColorCollections.colorWhite,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Quiz UX',
-                          style: FontCollections.h3,
+                    );
+                  }
+                  final todos = snapshot.data!.docs;
+                  return ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: todos.length,
+                    itemBuilder: (context, index) {
+                      final todo = todos[index];
+                      final data = todo.data() as Map<String, dynamic>;
+                      return Container(
+                        width: 200,
+                        margin: const EdgeInsets.only(right: 16.0),
+                        padding: const EdgeInsets.all(16.0),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15.0),
+                          color: ColorCollections.colorWhite,
                         ),
-                        SizedBox(height: 8.0),
-                        Text(
-                          'Selasa, 8 Oktober 2024 \n23:00 pm',
-                          style: FontCollections.paragraph3,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              data['name'] ?? 'Catatan',
+                              style: FontCollections.h3,
+                            ),
+                            const SizedBox(height: 8.0),
+                            Text(
+                              data['category'] ?? 'Tanpa Kategori',
+                              style: FontCollections.paragraph3.copyWith(
+                                color: ColorCollections
+                                    .primaryBlue, // Menambahkan warna untuk kategori
+                              ),
+                            ),
+                            const SizedBox(height: 8.0),
+                            Text(
+                              '${data['date'] ?? ''} ${data['time'] ?? ''}',
+                              style: FontCollections.paragraph3,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    width: 20.0,
-                  ),
-                  Container(
-                    width: 200,
-                    padding: const EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15.0),
-                      color: ColorCollections.colorWhite,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Tugas UX',
-                          style: FontCollections.h3,
-                        ),
-                        SizedBox(height: 8.0),
-                        Text(
-                          'Selasa, 8 Oktober 2024 \n23:00 pm',
-                          style: FontCollections.paragraph3,
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    width: 20.0,
-                  ),
-                ],
+                      );
+                    },
+                  );
+                },
               ),
             ),
             SizedBox(
@@ -248,13 +241,14 @@ class homePage extends StatelessWidget {
                         children: [
                           Image.asset(
                             'assets/images/quiz.png',
-                            height: 90.0,
-                            width: 90.0,
+                            height: MediaQuery.of(context).size.height * 0.1,
+                            width: MediaQuery.of(context).size.height * 0.1,
+                            fit: BoxFit.cover,
                           ),
                           SizedBox(width: 40.0),
                           Text(
                             'Quiz Kuliah',
-                            style: FontCollections.h2,
+                            style: FontCollections.h4,
                             textAlign: TextAlign.start,
                           ),
                         ],
@@ -277,13 +271,14 @@ class homePage extends StatelessWidget {
                         children: [
                           Image.asset(
                             'assets/images/kelompok.png',
-                            height: 90.0,
-                            width: 90.0,
+                            height: MediaQuery.of(context).size.height * 0.1,
+                            width: MediaQuery.of(context).size.height * 0.1,
+                            fit: BoxFit.cover,
                           ),
                           SizedBox(width: 40.0),
                           Text(
                             'Tugas Kelompok',
-                            style: FontCollections.h2,
+                            style: FontCollections.h4,
                             textAlign: TextAlign.start,
                           ),
                         ],
@@ -306,13 +301,14 @@ class homePage extends StatelessWidget {
                         children: [
                           Image.asset(
                             'assets/images/presentasi.png',
-                            height: 90.0,
-                            width: 90.0,
+                            height: MediaQuery.of(context).size.height * 0.1,
+                            width: MediaQuery.of(context).size.height * 0.1,
+                            fit: BoxFit.cover,
                           ),
                           SizedBox(width: 40.0),
                           Text(
-                            'presentasi',
-                            style: FontCollections.h2,
+                            'Presentasi',
+                            style: FontCollections.h4,
                             textAlign: TextAlign.start,
                           ),
                         ],

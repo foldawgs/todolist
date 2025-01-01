@@ -99,7 +99,7 @@ class ProfilePage extends StatelessWidget {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red[900],
+                      backgroundColor: ColorCollections.primaryRed,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),

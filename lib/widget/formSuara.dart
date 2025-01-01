@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:todolist/design_system/styles/color_collections.dart';
+import 'package:todolist/design_system/styles/font_collections.dart';
 
 class FormSuaraPage extends StatefulWidget {
   const FormSuaraPage({super.key});
@@ -78,7 +80,8 @@ class _FormSuaraPageState extends State<FormSuaraPage> {
 
       if (await metadataFile.exists()) {
         String existingData = await metadataFile.readAsString();
-        metadataList = List<Map<String, dynamic>>.from(jsonDecode(existingData));
+        metadataList =
+            List<Map<String, dynamic>>.from(jsonDecode(existingData));
       }
 
       metadataList.add({
@@ -106,7 +109,15 @@ class _FormSuaraPageState extends State<FormSuaraPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Form Catatan Suara")),
+      backgroundColor: ColorCollections.backgroundColor,
+      appBar: AppBar(
+        backgroundColor: ColorCollections.backgroundColor,
+        title: Text(
+          "Form Catatan Suara",
+          style: FontCollections.h2,
+        ),
+        centerTitle: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
@@ -126,7 +137,7 @@ class _FormSuaraPageState extends State<FormSuaraPage> {
               items: _kategoriList.map((String kategori) {
                 return DropdownMenuItem<String>(
                   value: kategori,
-                  child: Text(kategori),
+                  child: Text(kategori, style: FontCollections.paragraph3),
                 );
               }).toList(),
               onChanged: (String? newValue) {
@@ -144,7 +155,18 @@ class _FormSuaraPageState extends State<FormSuaraPage> {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: _isRecording ? _stopRecording : _startRecording,
-              child: Text(_isRecording ? 'Merekam...' : 'Rekam Suara'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: ColorCollections.primaryBlue,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+              ),
+              child: Text(
+                _isRecording ? 'Merekam...' : 'Rekam Suara',
+                style: FontCollections.paragraph1
+                    .copyWith(color: ColorCollections.colorWhite),
+              ),
             ),
             SizedBox(height: 20),
             ElevatedButton(
@@ -159,7 +181,18 @@ class _FormSuaraPageState extends State<FormSuaraPage> {
                   print('Tidak ada file rekaman untuk disimpan.');
                 }
               },
-              child: Text('Simpan'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: ColorCollections.primaryBlue,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+              ),
+              child: Text(
+                'Simpan',
+                style: FontCollections.paragraph1
+                    .copyWith(color: ColorCollections.colorWhite),
+              ),
             ),
           ],
         ),

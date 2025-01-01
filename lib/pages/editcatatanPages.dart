@@ -62,9 +62,10 @@ class _EditCatatanPageState extends State<EditCatatanPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ColorCollections.backgroundColor,
       appBar: AppBar(
         backgroundColor: ColorCollections.backgroundColor,
-        title: const Text(
+        title: Text(
           "Edit Catatan",
           style: FontCollections.h2,
         ),
@@ -78,27 +79,47 @@ class _EditCatatanPageState extends State<EditCatatanPage> {
             children: [
               TextFormField(
                 controller: _nameController,
-                decoration: const InputDecoration(labelText: "Nama"),
+                decoration: InputDecoration(
+                  labelText: "Nama",
+                  labelStyle: FontCollections.paragraph1,
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: ColorCollections.primaryBlue),
+                  ),
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "Nama tidak boleh kosong";
                   }
                   return null;
                 },
+                style: FontCollections.paragraph1,
               ),
               TextFormField(
                 controller: _descriptionController,
-                decoration: const InputDecoration(labelText: "Deskripsi"),
+                decoration: InputDecoration(
+                  labelText: "Deskripsi",
+                  labelStyle: FontCollections.paragraph1,
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: ColorCollections.primaryBlue),
+                  ),
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "Deskripsi tidak boleh kosong";
                   }
                   return null;
                 },
+                style: FontCollections.paragraph1,
               ),
               TextFormField(
                 controller: _dateController,
-                decoration: const InputDecoration(labelText: "Tanggal"),
+                decoration: InputDecoration(
+                  labelText: "Tanggal",
+                  labelStyle: FontCollections.paragraph1,
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: ColorCollections.primaryBlue),
+                  ),
+                ),
                 onTap: () async {
                   FocusScope.of(context).requestFocus(FocusNode());
                   DateTime? date = await showDatePicker(
@@ -112,10 +133,17 @@ class _EditCatatanPageState extends State<EditCatatanPage> {
                         "${date.year}-${date.month}-${date.day}";
                   }
                 },
+                style: FontCollections.paragraph1,
               ),
               TextFormField(
                 controller: _timeController,
-                decoration: const InputDecoration(labelText: "Waktu"),
+                decoration: InputDecoration(
+                  labelText: "Waktu",
+                  labelStyle: FontCollections.paragraph1,
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: ColorCollections.primaryBlue),
+                  ),
+                ),
                 onTap: () async {
                   FocusScope.of(context).requestFocus(FocusNode());
                   TimeOfDay? time = await showTimePicker(
@@ -127,13 +155,18 @@ class _EditCatatanPageState extends State<EditCatatanPage> {
                         "${time.hour}:${time.minute.toString().padLeft(2, '0')}";
                   }
                 },
+                style: FontCollections.paragraph1,
               ),
               DropdownButtonFormField<String>(
                 value: _selectedCategory,
                 items: _categories
                     .map((category) => DropdownMenuItem(
                           value: category,
-                          child: Text(category),
+                          child: Text(
+                            category,
+                            style: FontCollections.paragraph1
+        ,
+                          ),
                         ))
                     .toList(),
                 onChanged: (value) {
@@ -141,7 +174,13 @@ class _EditCatatanPageState extends State<EditCatatanPage> {
                     _selectedCategory = value!;
                   });
                 },
-                decoration: const InputDecoration(labelText: "Kategori"),
+                decoration: InputDecoration(
+                  labelText: "Kategori",
+                  labelStyle: FontCollections.paragraph1,
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: ColorCollections.primaryBlue),
+                  ),
+                ),
               ),
               const SizedBox(height: 20),
               ElevatedButton(
@@ -157,7 +196,19 @@ class _EditCatatanPageState extends State<EditCatatanPage> {
                     Navigator.pop(context);
                   }
                 },
-                child: const Text("Simpan"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ColorCollections.primaryBlue,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+                ),
+                child: Text(
+                  "Simpan",
+                  style: FontCollections.paragraph1
+                    .copyWith(color: ColorCollections.colorWhite),
+                ),
               ),
             ],
           ),
