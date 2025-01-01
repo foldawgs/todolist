@@ -37,6 +37,18 @@ dependencies:
   cupertino_icons: ^1.0.8
   google_fonts: ^6.2.1
   flutter_native_splash: ^2.4.2
+  curved_nav_bar: ^0.0.2
+  syncfusion_flutter_calendar: ^27.2.2
+  flutter_svg: ^2.0.16
+  flutter_sound: ^9.17.8
+  permission_handler: ^11.3.1
+  firebase_core: ^3.8.1
+  firebase_auth: ^5.3.4
+  cloud_firestore: ^5.5.1
+  path_provider: ^2.1.5
+  flutter_local_notifications: ^18.0.1
+  timezone: ^0.9.4
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
@@ -47,7 +59,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^4.0.0
+  # flutter_lints: ^4.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -71,6 +83,7 @@ flutter:
   assets:
     - assets/fonts/
     - assets/images/
+    - assets/
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:

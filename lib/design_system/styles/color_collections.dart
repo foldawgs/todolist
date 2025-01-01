@@ -11,4 +11,5 @@ class ColorCollections {
   static const Color colorColdGrey = Color(0xFF415371);
   static const Color colorDarkGrey = Color(0xFF898D9E);
   static const Color colorDustGrey = Color(0xFFB0B2C3);
+  static const Color backgroundColor = Color(0xFFFAFAFA);
 }
