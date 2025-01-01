@@ -178,44 +178,60 @@ class _EditCatatanPageState extends State<EditCatatanPage> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  try {
                     // Menggabungkan date dan time menjadi DateTime
                     List<String> dateParts = _dateController.text.split('-');
                     List<String> timeParts = _timeController.text.split(':');
                     DateTime dateTime = DateTime(
-                      int.parse(dateParts[0]), // year
-                      int.parse(dateParts[1]), // month
-                      int.parse(dateParts[2]), // day
-                      int.parse(timeParts[0]), // hour
-                      int.parse(timeParts[1]), // minute
+                      int.parse(dateParts[0]), // Year
+                      int.parse(dateParts[1]), // Month
+                      int.parse(dateParts[2]), // Day
+                      int.parse(timeParts[0]), // Hour
+                      int.parse(timeParts[1]), // Minute
                     );
 
-                    // Simpan ke Firestore
+                    // Mengonversi DateTime ke Firestore Timestamp
+                    Timestamp firestoreTimestamp = Timestamp.fromDate(dateTime);
+
+                    // Simpan data ke Firestore
                     await widget.reference.update({
                       'name': _nameController.text,
                       'description': _descriptionController.text,
-                      'date': dateTime, // Tanggal sebagai Timestamp
+                      'date': firestoreTimestamp, // Simpan sebagai Timestamp
                       'category': _selectedCategory,
                     });
 
+                    // Berikan notifikasi berhasil
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Catatan berhasil diperbarui")),
+                    );
+
+                    // Kembali ke halaman sebelumnya
                     Navigator.pop(context);
+                  } catch (e) {
+                    // Tampilkan pesan kesalahan
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Terjadi kesalahan: $e")),
+                    );
                   }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: ColorCollections.primaryBlue,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: ColorCollections.primaryBlue,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                child: Text(
-                  "Simpan",
-                  style: FontCollections.paragraph1
-                      .copyWith(color: ColorCollections.colorWhite),
+                padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+              ),
+              child: Text(
+                "Simpan",
+                style: FontCollections.paragraph1.copyWith(
+                  color: ColorCollections.colorWhite,
                 ),
               ),
+            )
             ],
           ),
         ),

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:todolist/design_system/styles/font_collections.dart';
 import 'package:todolist/design_system/styles/color_collections.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:todolist/pages/editcatatanPages.dart'; // Pastikan import ini mengarah ke file EditCatatanPage
+import 'package:todolist/pages/detailcatatanPage.dart';
 import 'package:intl/intl.dart'; // Import intl untuk format tanggal
 
 class CatatanPage extends StatefulWidget {
@@ -121,13 +121,14 @@ class _SemuaCatatanPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => EditCatatanPage(
+                    builder: (context) => DetailCatatanPage(
                       reference: todo.reference,
                       name: data['name'] ?? '',
                       description: data['description'] ?? '',
                       date: formattedDate,
                       time: time,
                       category: data['category'] ?? '',
+                      reminder: data['reminder'] ?? '10 menit sebelumnya',
                     ),
                   ),
                 );
@@ -174,7 +175,9 @@ class _SemuaCatatanPage extends StatelessWidget {
                 Text(description, style: FontCollections.paragraph2),
                 const SizedBox(height: 4),
                 Text("Tanggal: $date", style: FontCollections.paragraph2),
+                const SizedBox(height: 4),
                 Text("Waktu: $time", style: FontCollections.paragraph2),
+                const SizedBox(height: 4),
                 Text("$category", style: FontCollections.paragraph2),
               ],
             ),
@@ -243,13 +246,14 @@ class _CatatanSelesaiPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => EditCatatanPage(
+                    builder: (context) => DetailCatatanPage(
                       reference: todo.reference,
                       name: data['name'] ?? '',
                       description: data['description'] ?? '',
                       date: formattedDate,
                       time: time,
                       category: data['category'] ?? '',
+                      reminder: data['reminder'] ?? '10 menit sebelumnya',
                     ),
                   ),
                 );
